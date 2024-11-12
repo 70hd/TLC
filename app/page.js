@@ -1,101 +1,132 @@
-import Image from "next/image";
+// app/page.js
+"use client";
+
+import Hero from "./components/home-components/hero";
+import Banner from "./components/home-components/banner";
+import Rewards from "./components/home-components/rewards";
+import MiniProductComponent from "./components/menu-components/mini-product-component";
+import LargeBoxes from "./components/home-components/large-boxes";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [database, setDatabase] = useState([]);
+  const [buttonDatabase, setButtonDatabase] = useState([]);
+  const getData = (name) =>
+    database.find((item) => item.name === name)?.text || "";
+  const getImageData = (name) =>
+    database.find((item) => item.name === name)?.link || "/";
+  const getCtaData = (name) =>
+    buttonDatabase.find((item) => item.name === name)?.cta || "/";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/home");
+        if (!response.ok) throw new Error("Network response failed");
+        const data = await response.json();
+        setDatabase(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/button");
+        if (!response.ok) throw new Error("Network response failed");
+        const data = await response.json();
+        setButtonDatabase(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const foodItems = Array.from({ length: 7 }, (_, i) => ({
+    title: getData(`Food ${i + 1} Title`),
+    miniTitle: getData(`Food ${i + 1} Mini Title`),
+    image: getImageData(`Food ${i + 1} Image`),
+    link: "/home",
+  }));
+
+  const largeBoxesData = [
+    {
+      title: getData("Rewards Title"),
+      text: getData("Rewards Body"),
+      image: getImageData("Rewards Image"),
+      cta: getCtaData("Home Rewards Button"),
+      cta2: getCtaData("Home Rewards Button 2"),
+      black: true,
+    },
+    {
+      title: getData("Order Online Title"),
+      text: getData("Order Online Body"),
+      image: getImageData("Order Online Image"),
+      cta: getCtaData("Home Order Online Button"),
+      cta2: getCtaData("Home Order Online Button 2"),
+      black: false,
+    },
+    {
+      title: getData("Visit locations Title"),
+      text: getData("Visit locations Body"),
+      image: getImageData("Visit locations Image"),
+      cta: getCtaData("Home Locations Button"),
+      cta2: getCtaData("Home Locations Button 2"),
+      black: false,
+    },
+    {
+      title: getData("View The Menu Title"),
+      text: getData("View The Menu Body"),
+      image: getImageData("View The Menu Image"),
+      cta: getCtaData("Home Menu Button"),
+      cta2: getCtaData("Home Menu Button 2"),
+      black: true,
+    },
+  ];
+
+  return (
+    <div className="w-full flex flex-col space-y-9">
+
+      <Hero
+        h1={getData("Hero Title")}
+        p2={getData("Hero Body")}
+        theCTA={getCtaData("Home Hero Button")}
+        theLink="./menu"
+      />
+      <div className="w-full overflow-hidden relative h-[312px]  flex items-center justify-center">
+        <div className="absolute right-[-59.6%]">
+          <MiniProductComponent sides={foodItems} />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+      <div className="flex flex-wrap w-full custom-padding gap-8">
+        {largeBoxesData.map(
+          ({ title, cta2, cta, text, image, black }, index) => (
+            <LargeBoxes
+              key={index}
+              cta={cta}
+              cta2={cta2}
+              Title={title}
+              Text={text}
+              image={image}
+              black={black}
+            />
+          )
+        )}
+      </div>
+      <Banner
+        h1={getData("Banner Title")}
+        p1={getData("Banner Body")}
+        theCTA={getCtaData("Home Banner Button")}
+      />
+      <Rewards
+        image={getImageData("Rewards CTA Image")}
+        h1={getData("Rewards CTA Title")}
+        p1={getData("Rewards CTA Body")}
+      />
     </div>
   );
 }

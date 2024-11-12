@@ -1,0 +1,13 @@
+.App {
+    height: 100vh;
+    width: 100vh;
+}
+
+.map-container {
+    height: 100%;
+    width: 100%;
+}
+
+.map-container {
+  color: black;
+}

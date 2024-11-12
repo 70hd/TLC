@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // url = "postgresql://postgres.xmdndgiekijsntmentkk:.EgcV8jNw_2UnHs@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
+}
+
+model MenuItem {
+  id         Int          @id @default(autoincrement())
+  title      String
+  miniTitle  String
+  image      String
+  link       String
+  categoryId Int
+  category   MenuCategory @relation(fields: [categoryId], references: [id])
+}
+
+model MenuCategory {
+  id    Int        @id @default(autoincrement())
+  name  String
+  items MenuItem[]
+}
+
+model smallProductInfo {
+  id                     Int                  @id @default(autoincrement())
+  title                  String
+  link                   String
+  image                  String
+  smallProductCategoryId Int
+  category               smallProductCategory @relation(fields: [smallProductCategoryId], references: [id])
+}
+
+model smallProductCategory {
+  id           Int                @id @default(autoincrement())
+  name         String             @unique
+  smallProduct smallProductInfo[]
+}
+
+model miniProductInfo {
+  id                    Int                 @id @default(autoincrement())
+  title                 String
+  miniTitle             String
+  link                  String
+  image                 String
+  miniProductCategoryId Int
+  category              miniProductCategory @relation(fields: [miniProductCategoryId], references: [id])
+}
+
+model miniProductCategory {
+  id          Int               @id @default(autoincrement())
+  name        String            @unique
+  miniProduct miniProductInfo[]
+}
+
+model homeText {
+  id       Int     @id @default(autoincrement())
+  name     String
+  text     String
+  link     String?
+  homeId   Int
+  category home    @relation(fields: [homeId], references: [id])
+}
+
+model home {
+  id   Int @id @default(autoincrement())
+  text homeText[]
+}
+
+model button {
+  id Int @id @default(autoincrement())
+  name String
+  cta String
+  link String?
+  filled String?
+  style String?
+}
+
+model footerText {
+  id       Int     @id @default(autoincrement())
+  name     String
+  text     String
+  target   String?
+  link     String?
+  homeId   Int
+  category footer @relation(fields: [homeId], references: [id])
+}
+
+model footer {
+  id   Int @id @default(autoincrement())
+  text footerText[]
+}
+
+model form {
+  id Int @id @default(autoincrement())
+  email String @unique
+}
+
+enum CategoryEnum {
+  SOUPS
+  APERITIVOS
+  SALADS
+  BURRITOS
+  BOWLS
+  TACOS
+  ENCHILADAS
+  KIDS
+  SIDES
+  BEVERAGES
+  SODAS
+  BREAKFAST
+}
